@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "dependencies": {
+    "a": "lib-a",
+    "b": [
+      "lib-b-0",
+      "lib-b-1"
+    ],
+    "c": {
+      "name": "lib-c",
+      "version": 0.1
+    }
+  }
+}

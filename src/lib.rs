@@ -1,7 +1,14 @@
 extern crate serde;
 
-#[cfg(any(test, feature = "test", feature = "json"))]
+#[cfg(test)]
+#[macro_use]
+extern crate serde_derive;
+
+#[cfg(feature = "serde_json")]
 extern crate serde_json;
+
+#[cfg(feature = "serde_yaml")]
+extern crate serde_yaml;
 
 /// A macro generates from arbitrary file path and type definition which involve to the file to the data structure ebeddeded data of file.
 ///
@@ -20,10 +27,17 @@ extern crate serde_json;
 /// #[derive(Deserialize, PartialEq, Debug)]
 /// struct Sample {
 ///     version: usize,
+///     description: String
 /// }
 ///
 /// let instance = embedded!("../assets/simple.json", Sample);
-/// assert_eq!(Sample { version: 1 }, instance.value().unwrap());
+/// assert_eq!(
+///     Sample {
+///         version: 1,
+///         description: "This is sample configuration file".to_owned(),
+///     },
+///     instance.value().unwrap()
+/// );
 /// # }
 /// ```
 #[macro_export]
@@ -42,12 +56,42 @@ macro_rules! embedded {
 
             // FIXME: If #[cfg(doctest)] has been released, I can remove those hacky solution.
             // For more information -> https://github.com/rust-lang/rust/issues/45599
-            #[cfg(any(test, feature = "test", feature = "json"))]
+            // #[cfg(any(test, feature = "test", feature = "serde_json"))]
+            #[cfg(feature = "serde_json")]
             pub fn value(&self) -> serde_json::Result<$def> {
                 serde_json::from_slice(&self.internal)
+            }
+
+            // #[cfg(any(test, feature = "test", feature = "serde_yaml"))]
+            #[cfg(feature = "serde_yaml")]
+            pub fn value(&self) -> serde_yaml::Result<$def> {
+                serde_yaml::from_slice(&self.internal)
             }
         }
 
         Embedded::new()
     }}
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[cfg(feature = "serde_yaml")]
+    fn yaml() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Sample {
+            version: usize,
+            description: String,
+        }
+        let instance = embedded!("../assets/simple.yaml", Sample);
+        assert_eq!(
+            Sample {
+                version: 1,
+                description: "This is sample configuration file".to_owned(),
+            },
+            instance.value().unwrap()
+        );
+    }
 }

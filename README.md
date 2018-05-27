@@ -1,3 +1,7 @@
+# embeddable-config
+
+## Note
+
 ```rs
 // 1. Manually convert from file to aribitarly type
 #[derive(Embeddable)]
@@ -14,15 +18,15 @@ let config = Config::with_file("conf.yml");
 let config = Config::with_embeded_file("conf.yml");
 ```
 
-- [ ] yaml
-- [ ] json
-- [ ] toml
-- [ ] xml
+* [ ] yaml
+* [x] json
+* [ ] toml
+* [ ] xml
 
-- [ ] log4rs
-- [ ] clap-rs
+* [ ] log4rs
+* [ ] clap-rs
 
-- [ ] nightly
-- [ ] 1.26.0
-- [ ] 1.25.0
-- [ ] 1.24.0
+* [x] nightly
+* [x] 1.26.0
+* [x] 1.25.0
+* [x] 1.24.0

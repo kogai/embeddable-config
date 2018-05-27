@@ -2,13 +2,34 @@ extern crate serde;
 
 #[cfg(test)]
 #[macro_use]
+extern crate quote;
+
+#[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 
-use std::path::Path;
+use serde::{Deserialize, Serialize};
+#[derive(Deserialize, Serialize, PartialEq, Debug)]
+struct Sample {
+    version: usize,
+}
 
-trait Embeddable {
-    fn from_file<P: AsRef<Path>>(path: P) -> Self;
+pub struct EmbeddedT {
+    internal: &'static [u8],
+}
+
+impl EmbeddedT {
+    pub fn new() -> Self {
+        EmbeddedT {
+            internal: include_bytes!("../assets/simple.json"),
+        }
+    }
+    pub fn value<'a, T>(&self) -> T
+    where
+        T: serde::Deserialize<'a>,
+    {
+        serde_json::from_slice(&self.internal).unwrap()
+    }
 }
 
 #[cfg(test)]
@@ -17,27 +38,7 @@ mod tests {
 
     #[test]
     fn from_file() {
-        use std::fs;
-        use std::io::Read;
-
-        #[derive(Deserialize, Serialize, PartialEq, Debug)]
-        struct T {
-            version: usize,
-        };
-        impl Embeddable for T {
-            fn from_file<P: AsRef<Path>>(path: P) -> Self {
-                let x = match fs::File::open(path) {
-                    Ok(mut file) => {
-                        let mut buf = Vec::new();
-                        let _ = file.read_to_end(&mut buf);
-                        buf
-                    }
-                    Err(e) => unreachable!(e),
-                };
-                let x = serde_json::from_slice::<T>(&x).unwrap();
-                x
-            }
-        }
-        assert_eq!(T { version: 1 }, T::from_file("assets/simple.json"));
+        let z = EmbeddedT::new();
+        assert_eq!(Sample { version: 1 }, z.value());
     }
 }

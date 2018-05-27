@@ -18,7 +18,7 @@ let config = Config::with_file("conf.yml");
 let config = Config::with_embeded_file("conf.yml");
 ```
 
-* [ ] yaml
+* [x] yaml
 * [x] json
 * [ ] toml
 * [ ] xml

@@ -11,6 +11,7 @@ dependencies = [
  "serde_derive 1.0.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_yaml 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "toml 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -86,6 +87,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "toml"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "serde 1.0.60 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "unicode-xid"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -109,5 +118,6 @@ dependencies = [
 "checksum serde_json 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)" = "f3ad6d546e765177cf3dded3c2e424a8040f870083a0e64064746b958ece9cb1"
 "checksum serde_yaml 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)" = "107bb818146aaf922e7bbcf6a940f1db2f0dcf381779b451e400331b2c6f86db"
 "checksum syn 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)" = "99d991a9e7c33123925e511baab68f7ec25c3795962fe326a2395e5a42a614f0"
+"checksum toml 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = "a0263c6c02c4db6c8f7681f9fd35e90de799ebd4cfdeab77a38f4ff6b3d8c0d9"
 "checksum unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc72304796d0818e357ead4e000d19c9c174ab23dc11093ac919054d20a6a7fc"
 "checksum yaml-rust 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "57ab38ee1a4a266ed033496cf9af1828d8d6e6c1cfa5f643a2809effcae4d628"

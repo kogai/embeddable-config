@@ -1,6 +1,4 @@
 extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 extern crate serde_json;
 
 /// A macro generates from arbitrary file path and type definition which involve to the file to the data structure ebeddeded data of file.
@@ -14,6 +12,7 @@ extern crate serde_json;
 /// # extern crate serde_json;
 /// # #[macro_use]
 /// # extern crate embeddable_config;
+///
 /// # fn main() {
 ///
 /// #[derive(Deserialize, PartialEq, Debug)]
@@ -28,8 +27,6 @@ extern crate serde_json;
 #[macro_export]
 macro_rules! embedded {
     ($path:expr, $def:ty) => {{
-        use serde::Deserialize;
-
         pub struct Embedded {
             internal: &'static [u8],
         }
@@ -41,30 +38,11 @@ macro_rules! embedded {
                 }
             }
 
-            pub fn value<'a, T>(&self) -> serde_json::Result<T>
-            where
-                T: serde::Deserialize<'a>,
-            {
+            pub fn value(&self) -> serde_json::Result<$def> {
                 serde_json::from_slice(&self.internal)
             }
         }
 
         Embedded::new()
     }}
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[derive(Deserialize, PartialEq, Debug)]
-    struct Sample {
-        version: usize,
-    }
-
-    #[test]
-    fn from_file() {
-        let instance = embedded!("../assets/simple.json", Sample);
-        assert_eq!(Sample { version: 1 }, instance.value().unwrap());
-    }
 }

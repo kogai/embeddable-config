@@ -1,4 +1,6 @@
 extern crate serde;
+
+#[cfg(any(test, feature = "test", feature = "json"))]
 extern crate serde_json;
 
 /// A macro generates from arbitrary file path and type definition which involve to the file to the data structure ebeddeded data of file.
@@ -38,6 +40,9 @@ macro_rules! embedded {
                 }
             }
 
+            // FIXME: If #[cfg(doctest)] has been released, I can remove those hacky solution.
+            // For more information -> https://github.com/rust-lang/rust/issues/45599
+            #[cfg(any(test, feature = "test", feature = "json"))]
             pub fn value(&self) -> serde_json::Result<$def> {
                 serde_json::from_slice(&self.internal)
             }

@@ -13,6 +13,9 @@ extern crate serde_yaml;
 #[cfg(feature = "toml")]
 extern crate toml;
 
+#[cfg(test)]
+extern crate log4rs;
+
 /// A macro generates from arbitrary file path and type definition which involve to the file to the data structure ebeddeded data of file.
 ///
 /// # Example
@@ -77,6 +80,46 @@ macro_rules! embedded {
     }}
 }
 
+pub enum Embeddable {
+    Log4rs,
+}
+
+macro_rules! from_file {
+    ($path:expr, $kind:path) => {{
+        match $kind {
+            Embeddable::Log4rs => {
+                let path = path.as_ref().to_path_buf();
+                let format = Format::from_path(&path)?;
+                let source = read_config(&path)?;
+                // An Err here could come because mtime isn't available, so don't bail
+                let modified = fs::metadata(&path).and_then(|m| m.modified()).ok();
+                let config = format.parse(&source)?;
+
+                let refresh_rate = config.refresh_rate();
+                let config = embedded!($path, log4rs::file::RawConfig);
+                match log4rs::init_config(config) {
+                    Ok(handle) => {
+                        if let Some(refresh_rate) = refresh_rate {
+                            ConfigReloader::start(
+                                path,
+                                format,
+                                refresh_rate,
+                                source,
+                                modified,
+                                deserializers,
+                                handle,
+                            );
+                        }
+                        Ok(())
+                    }
+                    Err(e) => Err(e.into()),
+                }
+            }
+            _ => unreachable!()
+        }
+    }}
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,6 +140,14 @@ mod tests {
             },
             instance.value().unwrap()
         );
+    }
+
+    #[test]
+    #[cfg(feature = "serde_yaml")]
+    fn from_yaml() {
+        // TODO: Replace to actual configuration.
+        let actual = from_file!("../assets/simple.yaml", Embeddable::Log4rs);
+        // println!("{:?}", actual.value());
     }
 
     #[test]

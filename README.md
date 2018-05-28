@@ -20,8 +20,7 @@ let config = Config::with_embeded_file("conf.yml");
 
 * [x] yaml
 * [x] json
-* [ ] toml
-* [ ] xml
+* [x] toml
 
 * [ ] log4rs
 * [ ] clap-rs
@@ -30,3 +29,4 @@ let config = Config::with_embeded_file("conf.yml");
 * [x] 1.26.0
 * [x] 1.25.0
 * [x] 1.24.0
+* [ ] Windows
